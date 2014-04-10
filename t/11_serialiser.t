@@ -6,25 +6,13 @@ use Test::More;
 use Test::Exception;
 use Mojo::IOLoop;
 
+use File::Basename;
+use lib dirname(__FILE__);
+use FakeBackend;
+
 package FakeApp {
 	use Mojo::Base -base;
 	sub helper {}
-}
-
-package FakeBackend {
-	use Mojo::Base 'MojoX::Plugin::AnyCache::Backend';
-	my $storage = {};
-	has 'config';
-	sub get {
-		my ($self, $key, $cb) = @_;
-		return $cb->($storage->{$key}) if $cb;
-		return $storage->{$key};
-	}
-	sub set {
-		my ($self, $key, $value, $cb) = @_;
-		$storage->{$key} = $value;
-		$cb->() if $cb;
-	}
 }
 
 package FakeSerialiser {
@@ -50,6 +38,9 @@ isa_ok $cache->backend, 'FakeBackend';
 can_ok $cache->backend, 'get';
 can_ok $cache->backend, 'set';
 
+$cache->backend->support_sync(0);
+$cache->backend->support_async(0);
+
 dies_ok { $cache->get('foo') } 'dies in sync mode without backend support';
 like $@, qr/^Backend FakeBackend doesn't support synchronous requests/, 'correct error message in sync mode';
 dies_ok { $cache->get('foo', sub {}) } 'dies in async mode without backend support';
@@ -62,12 +53,37 @@ is $cache->get('foo'), 'BAR', 'set key returns correct value in sync mode';
 
 is $cache->backend->get("foo"), '10R', 'serialised data is stored';
 
+$cache->set('ruux' => 'BAR', 5);
+is $cache->ttl('ruux'), 5, 'ttl not affected by serialiser';
+is $cache->backend->get('ruux'), '10R', 'serialised data is stored with ttl';
+
 $cache->backend->support_async(1);
 $cache->get('qux', sub { is shift, undef, 'unset key returns undef in async mode'; Mojo::IOLoop->stop; });
 Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
-$cache->set('qux' => 'bar', sub { ok(1, 'callback is called on set in async mode'); Mojo::IOLoop->stop; });
+$cache->set('qux' => 'BAR', sub { ok(1, 'callback is called on set in async mode'); Mojo::IOLoop->stop; });
 Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
-$cache->get('qux', sub { is shift, 'bar', 'set key returns correct value in async mode'; Mojo::IOLoop->stop; });
+$cache->get('qux', sub { is shift, 'BAR', 'set key returns correct value in async mode'; Mojo::IOLoop->stop; });
 Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 
-done_testing(15);
+is $cache->backend->get("qux"), '10R', 'serialised data is stored';
+
+$cache->set('tuux' => 'BAR', 5, sub { ok(1, 'callback is called on set in async mode'); Mojo::IOLoop->stop; });
+Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
+$cache->ttl('tuux', sub { is shift, 5, 'set key with ttl returns correct ttl in async mode'; Mojo::IOLoop->stop; });
+Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
+$cache->get('tuux', sub { is shift, 'BAR', 'set key returns correct value in async mode'; Mojo::IOLoop->stop; });
+Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
+is $cache->backend->get("tuux"), '10R', 'serialised data is stored';
+
+$cache->incr('quux', 1);
+is $cache->backend->get('quux'), 1, 'serialiser not used for incr';
+$cache->decr('quux', 1);
+is $cache->backend->get('quux'), 0, 'serialiser not used for decr';
+
+SKIP: {
+	# Can't think of a sensible way to fix this...
+	skip 'FIXME ->get on incr/decr value uses deserialiser', 1;
+	is $cache->get('quux'), 1, 'serialiser not used for numeric value';	
+}
+
+done_testing(25);

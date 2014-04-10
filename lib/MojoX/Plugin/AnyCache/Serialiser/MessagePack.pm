@@ -16,6 +16,7 @@ sub deserialise {
 
     if ($flags & F_MESSAGEPACK) {
         my $mp = Data::MessagePack->new();
+        # TODO implement serialiser configuration
         $mp->prefer_integer(0);
         $data = $mp->unpack( $data );
     }

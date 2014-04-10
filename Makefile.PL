@@ -21,9 +21,12 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "MojoX::Plugin::AnyCache",
   "PREREQ_PM" => {
+    "AnyEvent" => 0,
     "Cache::Memcached" => 0,
     "Cache::Memcached::AnyEvent" => 0,
     "Data::MessagePack" => 0,
+    "EV" => 0,
+    "Memcached::Client" => 0,
     "Mojo::Base" => 0,
     "Mojo::Redis" => 0,
     "Mojolicious" => 0,
@@ -32,11 +35,13 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
+    "File::Basename" => 0,
     "Mojo::IOLoop" => 0,
     "Test::Exception" => 0,
-    "Test::More" => 0
+    "Test::More" => 0,
+    "lib" => 0
   },
-  "VERSION" => "0.01",
+  "VERSION" => "0.02",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -44,9 +49,13 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "AnyEvent" => 0,
   "Cache::Memcached" => 0,
   "Cache::Memcached::AnyEvent" => 0,
   "Data::MessagePack" => 0,
+  "EV" => 0,
+  "File::Basename" => 0,
+  "Memcached::Client" => 0,
   "Mojo::Base" => 0,
   "Mojo::IOLoop" => 0,
   "Mojo::Redis" => 0,
@@ -54,6 +63,7 @@ my %FallbackPrereqs = (
   "Test::Exception" => 0,
   "Test::More" => 0,
   "constant" => 0,
+  "lib" => 0,
   "strict" => 0,
   "warnings" => 0
 );

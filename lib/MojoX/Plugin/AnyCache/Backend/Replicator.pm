@@ -36,7 +36,8 @@ sub get_nodes {
 }
 
 sub get {
-	my ($self, $key, $cb) = @_;
+	my $cb = ref($_[-1]) eq 'CODE' ? pop : undef;
+	my ($self, $key) = @_;
 	my $node = $self->{nodes}->[rand @{$self->{nodes}}];
 	if(my $serialiser = $node->get_serialiser) {
 		return $node->get($key, sub {
@@ -49,12 +50,53 @@ sub get {
 }
 
 sub set {
-	my ($self, $key, $value, $cb) = @_;
+	my $cb = ref($_[-1]) eq 'CODE' ? pop : undef;
+	my ($self, $key, $value, $ttl) = @_;
 	if($cb) {
 		my $delay = Mojo::IOLoop->delay($cb);
-		return $_->set($key, ($_->get_serialiser ? $_->get_serialiser->serialise($value) : $value), $delay->begin) for @{$self->{nodes}};
+		$_->set($key, ($_->get_serialiser ? $_->get_serialiser->serialise($value) : $value), $ttl, $delay->begin) for @{$self->{nodes}};
+		return;
 	}
-	$_->set($key, ($_->get_serialiser ? $_->get_serialiser->serialise($value) : $value)) for @{$self->{nodes}};
+	$_->set($key, ($_->get_serialiser ? $_->get_serialiser->serialise($value) : $value), $ttl) for @{$self->{nodes}};
+}
+
+sub ttl {
+	my $cb = ref($_[-1]) eq 'CODE' ? pop : undef;
+	my ($self, $key) = @_;
+	$self->{nodes}->[rand @{$self->{nodes}}]->ttl($key, $cb)
+}
+
+sub incr {
+	my $cb = ref($_[-1]) eq 'CODE' ? pop : undef;
+	my ($self, $key, $amount) = @_;
+	if($cb) {
+		my $delay = Mojo::IOLoop->delay($cb);
+		$_->incr($key, $amount, $delay->begin) for @{$self->{nodes}};
+		return;
+	}
+	$_->incr($key, $amount) for @{$self->{nodes}};
+}
+
+sub decr {
+	my $cb = ref($_[-1]) eq 'CODE' ? pop : undef;
+	my ($self, $key, $amount) = @_;
+	if($cb) {
+		my $delay = Mojo::IOLoop->delay($cb);
+		$_->decr($key, $amount, $delay->begin) for @{$self->{nodes}};
+		return;
+	}
+	$_->decr($key, $amount) for @{$self->{nodes}};
+}
+
+sub del {
+	my $cb = ref($_[-1]) eq 'CODE' ? pop : undef;
+	my ($self, $key) = @_;
+	if($cb) {
+		my $delay = Mojo::IOLoop->delay($cb);
+		$_->del($key, $delay->begin) for @{$self->{nodes}};
+		return;
+	}
+	$_->del($key) for @{$self->{nodes}};
 }
 
 1;

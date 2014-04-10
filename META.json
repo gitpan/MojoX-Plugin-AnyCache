@@ -36,9 +36,12 @@
       },
       "runtime" : {
          "requires" : {
+            "AnyEvent" : "0",
             "Cache::Memcached" : "0",
             "Cache::Memcached::AnyEvent" : "0",
             "Data::MessagePack" : "0",
+            "EV" : "0",
+            "Memcached::Client" : "0",
             "Mojo::Base" : "0",
             "Mojo::Redis" : "0",
             "Mojolicious" : "0",
@@ -49,9 +52,11 @@
       },
       "test" : {
          "requires" : {
+            "File::Basename" : "0",
             "Mojo::IOLoop" : "0",
             "Test::Exception" : "0",
-            "Test::More" : "0"
+            "Test::More" : "0",
+            "lib" : "0"
          }
       }
    },
@@ -67,6 +72,6 @@
          "web" : "https://github.com/companieshouse/MojoX-Plugin-AnyCache"
       }
    },
-   "version" : "0.01"
+   "version" : "0.02"
 }
 

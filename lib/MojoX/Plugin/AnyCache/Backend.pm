@@ -26,5 +26,8 @@ sub get_serialiser {
 
 sub get { die("Must be overridden in backend module") };
 sub set { die("Must be overridden in backend module") };
+sub incr { die("Must be overridden in backend module") };
+sub decr { die("Must be overridden in backend module") };
+sub del { die("Must be overridden in backend module") };
 
 1;
