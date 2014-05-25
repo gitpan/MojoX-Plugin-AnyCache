@@ -8,10 +8,11 @@ unless($ENV{'CACHE_TEST_REDIS'}) {
 	plan skip_all => 'Redis tests skipped - set CACHE_TEST_REDIS to run tests'
 }
 
-package FakeApp {
+package FakeApp;
 	use Mojo::Base -base;
 	sub helper {}
-}
+
+package main;
 
 my $class = "MojoX::Plugin::AnyCache";
 use_ok $class;

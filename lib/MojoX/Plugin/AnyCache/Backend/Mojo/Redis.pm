@@ -3,6 +3,7 @@ package MojoX::Plugin::AnyCache::Backend::Mojo::Redis;
 use strict;
 use warnings;
 use Mojo::Base 'MojoX::Plugin::AnyCache::Backend';
+use Mojo::Util 'monkey_patch';
 
 use Mojo::Redis;
 
@@ -15,6 +16,12 @@ sub get_redis {
 	if(!$self->redis) {
 		my %opts = ();
 		$opts{server} = $self->config->{server} if exists $self->config->{server};
+
+        if( my $protocol = $self->config->{redis_protocol} ) {
+            eval "require $protocol; 1" // die "Failed to load configured redis protocol '$protocol': $@";
+            monkey_patch "Mojo::Redis", protocol_redis => sub { $protocol };
+        }
+
 		$self->redis(Mojo::Redis->new(%opts));
 	}
 	return $self->redis;

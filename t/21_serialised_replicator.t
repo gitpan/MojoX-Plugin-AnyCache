@@ -9,12 +9,11 @@ use File::Basename;
 use lib dirname(__FILE__);
 use FakeBackend;
 
-package FakeApp {
+package FakeApp;
 	use Mojo::Base -base;
 	sub helper {}
-}
 
-package FakeSerialiser {
+package FakeSerialiser;
 	use Mojo::Base 'MojoX::Plugin::AnyCache::Serialiser';
 	sub deserialise {
 	    my ($self, $data, $flags) = @_;
@@ -26,7 +25,8 @@ package FakeSerialiser {
 	    $data =~ tr/A-J/0-9/ if $data;
 	    return $data;
 	}
-}
+
+package main;
 
 my $class = "MojoX::Plugin::AnyCache";
 use_ok $class;

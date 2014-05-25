@@ -12,10 +12,11 @@ unless($ENV{'CACHE_TEST_MEMCACHED'}) {
 	plan skip_all => 'Memcached tests skipped - set CACHE_TEST_MEMCACHED to run tests'
 }
 
-package FakeApp {
+package FakeApp;
 	use Mojo::Base -base;
 	sub helper {}
-}
+
+package main;
 
 my $class = "MojoX::Plugin::AnyCache";
 use_ok $class;
@@ -127,4 +128,15 @@ $cache->get('ruux', sub { is shift, undef, 'delete completed successfully in asy
 is $sync, 0, 'call was asynchronous';
 Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 
-done_testing(44);
+# Nested gets (asynchronous)
+$sync = 0;
+$cache->get($key, sub {
+    is shift, 'bar', 'key returns correct value in async mode'; $sync = 1;
+    $cache->get($key, sub {
+        is shift, 'bar', 'key returns correct value in nested async mode'; Mojo::IOLoop->stop; $sync = 1;
+    });
+});
+is $sync, 0, 'call was asynchronous';
+Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
+
+done_testing(47);

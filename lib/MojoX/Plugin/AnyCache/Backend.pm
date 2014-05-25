@@ -13,7 +13,7 @@ sub get_serialiser {
 	my ($self) = @_;
 	if(!$self->serialiser && $self->config->{serialiser}) {
 		eval {
-			eval "require $self->config->{backend};";
+			eval "require $self->config->{serialiser};";
 			warn("Require failed: $@") if $self->config->{debug} && $@;
 			my $serialiser = $self->config->{serialiser}->new;
 			$serialiser->config($self->config);

@@ -15,21 +15,31 @@ has 'get_ttl_support' => sub { 0 };
 
 sub get_memcached {
 	my ($self) = @_;
+print STDERR "get_memcached\n";
 	if(!$self->memcached) {
+print STDERR "getting a new instance\n";
 		my %opts = ();
 		$opts{servers} = $self->config->{servers} if exists $self->config->{servers};
 		$self->memcached(Memcached::Client->new(%opts));
+print STDERR "Got a new instance\n";
 	}
 	return $self->memcached;
 }
 
 sub get { 
 	my ($cb, $self) = (pop, shift);
-	$self->get_memcached->get(@_, sub { $cb->(shift) });
+	#$self->get_memcached->get(@_, sub { $cb->(shift) });
+    my $i = $self->get_memcached;
+    
+print STDERR "Do GET\n";
+    $i->get(@_, sub { 
+print STDERR "Calling CALLBACK\n";
+        $cb->(shift) });
 }
 
 sub set {
 	my ($cb, $self, $key, $value, $ttl) = (pop, shift, shift, shift, shift);
+print STDERR "Do SET\n";
 	$self->get_memcached->set($key, $value, $ttl, @_, sub { $cb->() });
 	$self->get_memcached->set(":TTL:$key", time + $ttl, $ttl, @_, sub {} ) if $ttl && $self->get_ttl_support;
 }

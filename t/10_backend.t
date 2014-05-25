@@ -10,10 +10,11 @@ use File::Basename;
 use lib dirname(__FILE__);
 use FakeBackend;
 
-package FakeApp {
+package FakeApp;
 	use Mojo::Base -base;
 	sub helper {}
-}
+
+package main;
 
 my $class = "MojoX::Plugin::AnyCache";
 use_ok $class;

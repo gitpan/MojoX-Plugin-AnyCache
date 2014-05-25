@@ -9,7 +9,8 @@ my $class = "MojoX::Plugin::AnyCache";
 use_ok $class;
 my $cache = new_ok $class;
 
-package FakeApp {
+package FakeApp;
+
 	use Mojo::Base -base;
 	use Test::More;
 	sub helper {
@@ -18,7 +19,8 @@ package FakeApp {
 		is($helper, 'cache', 'cache helper is registered');
 		isa_ok($sub->(), 'MojoX::Plugin::AnyCache', 'cache object is returned by helper sub');
 	}
-}
+
+package main;
 
 lives_ok { $cache->register(FakeApp->new, { foo => 'bar' }) } 'register call successful';
 
