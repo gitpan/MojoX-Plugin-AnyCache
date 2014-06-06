@@ -8,4 +8,8 @@ my $class = "MojoX::Plugin::AnyCache";
 use_ok $class;
 new_ok $class;
 
-done_testing(2);
+my $class2 = "MojoX::Plugin::ManyCache";
+use_ok $class2;
+new_ok $class2;
+
+done_testing(4);

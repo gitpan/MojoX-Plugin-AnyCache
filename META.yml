@@ -31,6 +31,7 @@ requires:
   Cache::Memcached::AnyEvent: 0
   Data::MessagePack: 0
   EV: 0
+  MIME::Base64: 0
   Memcached::Client: 0
   Mojo::Base: 0
   Mojo::Redis: 0
@@ -42,4 +43,4 @@ resources:
   bugtracker: https://github.com/companieshouse/MojoX-Plugin-AnyCache/issues
   homepage: https://github.com/companieshouse/MojoX-Plugin-AnyCache
   repository: https://github.com/companieshouse/MojoX-Plugin-AnyCache.git
-version: 0.03
+version: 0.04

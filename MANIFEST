@@ -17,8 +17,10 @@ lib/MojoX/Plugin/AnyCache/Backend/Nop.pm
 lib/MojoX/Plugin/AnyCache/Backend/Replicator.pm
 lib/MojoX/Plugin/AnyCache/Serialiser.pm
 lib/MojoX/Plugin/AnyCache/Serialiser/MessagePack.pm
+lib/MojoX/Plugin/ManyCache.pm
 t/00_compile.t
 t/01_methods.t
+t/02_manycache.t
 t/10_backend.t
 t/11_serialiser.t
 t/12_raw.t

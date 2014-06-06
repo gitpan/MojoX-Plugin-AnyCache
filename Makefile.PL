@@ -26,6 +26,7 @@ my %WriteMakefileArgs = (
     "Cache::Memcached::AnyEvent" => 0,
     "Data::MessagePack" => 0,
     "EV" => 0,
+    "MIME::Base64" => 0,
     "Memcached::Client" => 0,
     "Mojo::Base" => 0,
     "Mojo::Redis" => 0,
@@ -41,7 +42,7 @@ my %WriteMakefileArgs = (
     "Test::More" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.03",
+  "VERSION" => "0.04",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -55,6 +56,7 @@ my %FallbackPrereqs = (
   "Data::MessagePack" => 0,
   "EV" => 0,
   "File::Basename" => 0,
+  "MIME::Base64" => 0,
   "Memcached::Client" => 0,
   "Mojo::Base" => 0,
   "Mojo::IOLoop" => 0,
